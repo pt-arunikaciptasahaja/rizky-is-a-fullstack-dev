@@ -1,0 +1,20 @@
+# dependencies
+/node_modules
+
+# Next.js build output
+/.next
+/out
+
+# local verification artifacts
+/tmp
+
+# local environment files
+.env*
+!.env.example
+
+# system files
+.DS_Store
+*.log
+
+# TypeScript
+*.tsbuildinfo

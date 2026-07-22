@@ -1,0 +1,8 @@
+{
+  "date": "2026-07-21",
+  "framework": "Next.js App Router",
+  "fontStack": "new project; Hallmark pairing introduced",
+  "palette": "new project; OKLCH tokens introduced",
+  "motion": "framer-motion requested",
+  "spacing": "4pt Hallmark scale"
+}
