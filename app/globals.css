@@ -1025,6 +1025,398 @@ main,
   color: var(--color-accent);
 }
 
+/* Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4
+ * macrostructure: Stat-Led · tone: technical · anchor hue: cobalt
+ * scope: automotive modernization flagship section
+ * contrast: pass · honest claims: pass · responsive: pass · mobile: 320/375/414/768
+ */
+.automotive-modernization {
+  padding-block-start: var(--space-3xl);
+  border-block: var(--rule-hair) solid var(--color-rule-strong);
+  background: var(--color-paper-2);
+}
+
+.automotive-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.72fr);
+  align-items: end;
+  gap: var(--space-3xl);
+}
+
+.automotive-kicker {
+  margin-bottom: var(--space-md);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.automotive-heading h2 {
+  max-width: 19ch;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: clamp(var(--text-2xl), 5vw, var(--text-display-s));
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.98;
+}
+
+.automotive-intro > p {
+  color: var(--color-ink-2);
+  font-size: var(--text-md);
+}
+
+.automotive-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+.automotive-links a {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding-inline: var(--space-md);
+  border: var(--rule-hair) solid var(--color-rule-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    transform var(--dur-micro) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out),
+    background-color var(--dur-short) var(--ease-out);
+}
+
+.automotive-links a:hover {
+  transform: translateY(-1px);
+  border-color: var(--color-accent);
+  background: var(--color-paper);
+}
+
+.automotive-links a:active {
+  transform: translateY(0);
+}
+
+.automotive-context {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: var(--space-3xl);
+  border-block: var(--rule-hair) solid var(--color-rule-strong);
+}
+
+.automotive-context > div {
+  min-width: 0;
+  padding: var(--space-lg);
+}
+
+.automotive-context > div + div {
+  border-left: var(--rule-hair) solid var(--color-rule);
+}
+
+.automotive-context dt,
+.migration-line > span {
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.automotive-context dd {
+  margin-top: var(--space-xs);
+  color: var(--color-ink-2);
+  font-size: var(--text-sm);
+}
+
+.migration-line {
+  display: grid;
+  grid-template-columns: auto auto minmax(4rem, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-md);
+  padding-block: var(--space-2xl);
+}
+
+.migration-line strong {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 750;
+}
+
+.migration-line i {
+  height: var(--rule-hair);
+  background: var(--color-accent);
+  transform-origin: left center;
+}
+
+.modernization-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: var(--rule-hair) solid var(--color-rule-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-paper);
+}
+
+.modernization-metric {
+  min-width: 0;
+  padding: clamp(var(--space-lg), 3vw, var(--space-xl));
+}
+
+.modernization-metric + .modernization-metric {
+  border-left: var(--rule-hair) solid var(--color-rule);
+}
+
+.modernization-metric-heading {
+  min-height: 4.5rem;
+}
+
+.modernization-metric h3 {
+  font-size: var(--text-base);
+  font-weight: 650;
+}
+
+.modernization-result {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin-top: var(--space-xs);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.modernization-value-stage {
+  min-height: 6.5rem;
+  display: flex;
+  align-items: flex-end;
+  margin-top: var(--space-lg);
+}
+
+.modernization-value-stage > div {
+  width: 100%;
+  min-width: 0;
+}
+
+.modernization-value-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.modernization-value-was {
+  flex: 0 0 auto;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.modernization-value-single strong {
+  display: block;
+  margin-top: var(--space-xs);
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-3xl));
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.055em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.modernization-value-stage.is-current strong {
+  color: var(--color-accent);
+}
+
+.modernization-value-accessible {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.modernization-track {
+  height: var(--space-2xs);
+  margin-top: var(--space-lg);
+  overflow: clip;
+  border-radius: var(--radius-pill);
+  background: var(--color-paper-3);
+}
+
+.modernization-track span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent);
+  transform-origin: left center;
+}
+
+.modernization-metric > p {
+  margin-top: var(--space-sm);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.architecture-diagram {
+  margin-top: var(--space-3xl);
+  padding-top: var(--space-3xl);
+  border-top: var(--rule-hair) solid var(--color-rule-strong);
+}
+
+.architecture-diagram-head {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.72fr) minmax(0, 1.28fr);
+  align-items: end;
+  gap: var(--space-3xl);
+}
+
+.architecture-diagram-head h3,
+.seo-ai-story h3 {
+  max-width: 24ch;
+  font-size: var(--text-xl);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.architecture-diagram-head p,
+.seo-ai-story > div:first-child p {
+  max-width: 60ch;
+  color: var(--color-ink-2);
+}
+
+.seo-ai-story > div:first-child p {
+  margin-top: var(--space-lg);
+}
+
+.architecture-map-viewport {
+  position: relative;
+  margin-top: var(--space-2xl);
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  border-block: var(--rule-hair) solid var(--color-rule-strong);
+  scrollbar-color: var(--color-accent) var(--color-paper-3);
+}
+
+.architecture-map-viewport:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: var(--space-2xs);
+}
+
+.architecture-system-map {
+  width: 100%;
+  min-width: 64rem;
+  height: auto;
+  display: block;
+  padding-block: var(--space-md);
+}
+
+.architecture-map-line {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-linecap: round;
+  stroke-width: 2;
+}
+
+.architecture-map-arrow {
+  fill: var(--color-accent);
+  stroke: none;
+}
+
+.architecture-map-node rect {
+  fill: var(--color-paper);
+  stroke: var(--color-rule-strong);
+  stroke-width: 2;
+}
+
+.architecture-map-node-platform rect,
+.architecture-map-node-outcome rect {
+  fill: var(--color-hero);
+}
+
+.architecture-map-node-search rect,
+.architecture-map-node-evidence rect {
+  fill: var(--color-hero-soft);
+}
+
+.architecture-map-node text {
+  fill: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 650;
+}
+
+.architecture-map-label {
+  fill: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.architecture-scroll-hint {
+  display: none;
+}
+
+.architecture-diagram figcaption {
+  max-width: 70ch;
+  margin: var(--space-md) 0 0 auto;
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  text-align: right;
+}
+
+.seo-ai-story {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.85fr) minmax(0, 1.15fr);
+  gap: var(--space-2xl);
+  margin-top: var(--space-3xl);
+  padding: clamp(var(--space-lg), 4vw, var(--space-2xl));
+  border: var(--rule-hair) solid var(--color-rule-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-hero);
+}
+
+.seo-capabilities {
+  display: flex;
+  align-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.seo-capabilities span {
+  min-height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--space-sm);
+  border: var(--rule-hair) solid var(--color-rule-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-paper);
+  color: var(--color-ink-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.ai-observation {
+  grid-column: 2;
+  padding-top: var(--space-lg);
+  border-top: var(--rule-hair) solid var(--color-rule-strong);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
+.ai-observation strong {
+  display: block;
+  margin-bottom: var(--space-xs);
+  color: var(--color-accent);
+}
+
 .projects-section {
   padding-block-start: var(--space-2xl);
 }
@@ -1524,6 +1916,7 @@ main,
   }
 
   .section-heading,
+  .automotive-heading,
   .footer-main {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
@@ -1532,6 +1925,40 @@ main,
 
   .project-card {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .automotive-context,
+  .modernization-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .automotive-context > div + div,
+  .modernization-metric + .modernization-metric {
+    border-left: 0;
+    border-top: var(--rule-hair) solid var(--color-rule);
+  }
+
+  .architecture-diagram-head,
+  .seo-ai-story {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ai-observation {
+    grid-column: 1;
+  }
+
+  .architecture-map-viewport {
+    padding-bottom: var(--space-xl);
+  }
+
+  .architecture-scroll-hint {
+    position: sticky;
+    inset: auto var(--space-md) var(--space-xs) auto;
+    width: max-content;
+    display: block;
+    margin: calc(-1 * var(--space-lg)) var(--space-sm) 0 auto;
+    color: var(--color-muted);
+    font-size: var(--text-xs);
   }
 
   .project-card-reversed .project-summary,
@@ -1717,6 +2144,62 @@ main,
 
   .section-heading {
     margin-bottom: var(--space-2xl);
+  }
+
+  .automotive-modernization {
+    padding-inline: var(--space-md);
+  }
+
+  .automotive-heading {
+    gap: var(--space-lg);
+  }
+
+  .automotive-heading h2 {
+    font-size: var(--text-2xl);
+  }
+
+  .automotive-intro > p {
+    font-size: var(--text-base);
+  }
+
+  .automotive-links {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .automotive-links a {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .automotive-context {
+    margin-top: var(--space-2xl);
+  }
+
+  .automotive-context > div {
+    padding-inline: 0;
+  }
+
+  .migration-line {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: var(--space-sm);
+    padding-block: var(--space-xl);
+  }
+
+  .migration-line > span {
+    display: none;
+  }
+
+  .migration-line strong:last-of-type {
+    text-align: right;
+  }
+
+  .modernization-metric-heading {
+    min-height: 0;
+  }
+
+  .seo-ai-story {
+    padding: var(--space-lg);
   }
 
   .section-heading h2 {

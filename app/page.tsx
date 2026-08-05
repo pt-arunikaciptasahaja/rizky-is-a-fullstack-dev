@@ -1,4 +1,5 @@
 import { AboutSection } from "@/components/AboutSection";
+import { AutomotiveModernization } from "@/components/AutomotiveModernization";
 import { ExperienceSection } from "@/components/ExperienceSection";
 import { Footer } from "@/components/Footer";
 import { GlobalPointerSpotlight } from "@/components/GlobalPointerSpotlight";
@@ -20,6 +21,7 @@ export default function Home() {
         <HeroSection />
         <ImpactMetrics />
         <AboutSection />
+        <AutomotiveModernization />
         <ProjectsSection />
         <ExperienceSection />
         <SkillsCertifications />

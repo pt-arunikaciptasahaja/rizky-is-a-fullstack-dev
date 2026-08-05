@@ -14,6 +14,19 @@ export interface Metric {
   detail: string;
 }
 
+export interface ModernizationMetric {
+  label: string;
+  before: number;
+  after: number;
+  beforeLabel: string;
+  afterLabel: string;
+  result: string;
+  note: string;
+  precision?: number;
+  suffix?: string;
+  direction: "up" | "down";
+}
+
 export interface AboutCard {
   title: string;
   description: string;
@@ -163,6 +176,55 @@ export const metrics: Metric[] = [
     detail: "Google Cloud certification",
   },
 ];
+
+export const automotiveModernization = {
+  title: "Modernizing two automotive marketplaces without losing search equity",
+  description:
+    "A cross-functional modernization of momotor.id and momobil.id—from legacy Ember.js experiences to faster Next.js platforms connecting marketplace inventory, editorial content, technical SEO, and measurable lead journeys.",
+  role: "Software Engineer · Architecture contributor",
+  scope: "Frontend modernization · Headless CMS · Technical SEO · Analytics",
+  collaboration: "Product · Data · Ads · Editorial · SEO",
+  platforms: [
+    { label: "momotor.id", href: "https://momotor.id/" },
+    { label: "momobil.id", href: "https://momobil.id/" },
+  ],
+  metrics: [
+    {
+      label: "User bounce rate",
+      before: 73,
+      after: 13.6,
+      beforeLabel: "73%",
+      afterLabel: "13.6%",
+      result: "−59.4 percentage points",
+      note: "GA4 comparison · source range to revalidate",
+      precision: 1,
+      suffix: "%",
+      direction: "down",
+    },
+    {
+      label: "Active listings supported",
+      before: 32,
+      after: 230,
+      beforeLabel: "32K",
+      afterLabel: "230K+",
+      result: "7.2× platform scale",
+      note: "The modernized platform supported this growth",
+      suffix: "K+",
+      direction: "up",
+    },
+    {
+      label: "Lighthouse SEO score",
+      before: 0,
+      after: 100,
+      beforeLabel: "Legacy audit",
+      afterLabel: "100/100",
+      result: "Perfect technical audit score",
+      note: "Measured with Lighthouse",
+      suffix: "/100",
+      direction: "up",
+    },
+  ] satisfies ModernizationMetric[],
+} as const;
 
 export const aboutCards: AboutCard[] = [
   {

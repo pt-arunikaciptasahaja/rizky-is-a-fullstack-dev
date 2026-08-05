@@ -5,7 +5,7 @@ import { projects, sectionCopy } from "@/data/portfolioData";
 
 export function ProjectsSection() {
   return (
-    <section className="content-section projects-section" id="projects" aria-labelledby="projects-title">
+    <section className="content-section projects-section" id="selected-work" aria-labelledby="projects-title">
       <MotionReveal>
         <SectionHeading
           id="projects-title"
