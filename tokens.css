@@ -13,6 +13,10 @@
   --color-accent-ink: oklch(98% 0.008 250);
   --color-success: oklch(57% 0.14 145);
   --color-error: oklch(52% 0.19 27);
+  --color-sunset-gold: oklch(80% 0.19 78);
+  --color-sunset-orange: oklch(73% 0.23 48);
+  --color-sunset-coral: oklch(67% 0.25 29);
+  --color-sunset-pink: oklch(62% 0.24 8);
   --color-focus: oklch(52% 0.2 256);
   --color-overlay: oklch(98% 0.012 95 / 0.88);
   --color-shadow: oklch(20% 0.018 255 / 0.14);
@@ -75,6 +79,10 @@
   --color-accent-ink: oklch(15% 0.026 255);
   --color-success: oklch(72% 0.15 145);
   --color-error: oklch(72% 0.17 27);
+  --color-sunset-gold: oklch(84% 0.18 78);
+  --color-sunset-orange: oklch(77% 0.22 48);
+  --color-sunset-coral: oklch(71% 0.24 29);
+  --color-sunset-pink: oklch(67% 0.23 8);
   --color-focus: oklch(81% 0.13 250);
   --color-overlay: oklch(14% 0.018 255 / 0.86);
   --color-shadow: oklch(4% 0.015 255 / 0.5);

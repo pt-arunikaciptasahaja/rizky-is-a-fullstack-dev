@@ -1,9 +1,10 @@
 "use client";
 
-import { Download, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { navigation, siteMeta } from "@/data/portfolioData";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ResumePreviewTrigger } from "@/components/ResumePreviewModal";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,9 +29,7 @@ export function Navbar() {
         <div className="nav-actions">
           <ThemeToggle />
 
-          <a className="nav-resume" href={siteMeta.resumeUrl} download>
-            Resume <Download aria-hidden="true" size={15} />
-          </a>
+          <ResumePreviewTrigger className="nav-resume">View Résumé</ResumePreviewTrigger>
 
           <button
             className="menu-button"
@@ -56,9 +55,9 @@ export function Navbar() {
               </li>
             ))}
           </ul>
-          <a href={siteMeta.resumeUrl} download onClick={closeMenu}>
-            Download Resume <Download aria-hidden="true" size={16} />
-          </a>
+          <ResumePreviewTrigger className="mobile-resume-trigger" onOpen={closeMenu}>
+            Open Résumé
+          </ResumePreviewTrigger>
         </div>
       ) : null}
     </header>

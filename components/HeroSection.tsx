@@ -1,10 +1,11 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowDownRight, Download, Github, Linkedin, Mail } from "lucide-react";
-import { hero, siteMeta, socialLinks } from "@/data/portfolioData";
+import { ArrowDownRight, Github, Linkedin, Mail } from "lucide-react";
+import { hero, socialLinks } from "@/data/portfolioData";
 import { AnimatedWelcome } from "@/components/AnimatedWelcome";
 import { LiveContextCard } from "@/components/LiveContextCard";
+import { ResumePreviewTrigger } from "@/components/ResumePreviewModal";
 
 const socialIcons = {
   LinkedIn: Linkedin,
@@ -38,9 +39,9 @@ export function HeroSection() {
           <a className="button button-primary" href="#projects">
             View Featured Projects <ArrowDownRight aria-hidden="true" size={18} />
           </a>
-          <a className="button button-secondary" href={siteMeta.resumeUrl} download>
-            Download Resume <Download aria-hidden="true" size={18} />
-          </a>
+          <ResumePreviewTrigger className="button button-secondary">
+            View Résumé
+          </ResumePreviewTrigger>
         </div>
 
         <div className="social-links" aria-label="Social links">

@@ -7,12 +7,14 @@ import { HeroSection } from "@/components/HeroSection";
 import { ImpactMetrics } from "@/components/ImpactMetrics";
 import { Navbar } from "@/components/Navbar";
 import { ProjectsSection } from "@/components/ProjectsSection";
+import { ResumePreviewModal } from "@/components/ResumePreviewModal";
 import { SkillsCertifications } from "@/components/SkillsCertifications";
 
 export default function Home() {
   return (
     <>
       <GlobalPointerSpotlight />
+      <ResumePreviewModal />
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>

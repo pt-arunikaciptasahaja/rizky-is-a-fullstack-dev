@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1a3691" />
+    <title>Gooey pattern reveal</title>
+    <style>
+      /* Hallmark · component: cursor reveal · genre: playful · theme: custom
+       * pre-emit critique: P5 H5 E5 S5 R5 V5
+       * motion: pointer stretch · metaball merge · trail dissolve
+       */
+      :root {
+        --color-default-field: #1a3691;
+        --color-default-line: #f5f2d0;
+        --color-reveal-field: #111827;
+        --color-reveal-line: #e63946;
+        --color-accessible-ink: #f5f2d0;
+        --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --dur-short: 220ms;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        overflow: clip;
+        background: var(--color-default-field);
+      }
+
+      body {
+        min-height: 100svh;
+        font-family: var(--font-body);
+      }
+
+      .reveal-stage {
+        position: fixed;
+        inset: 0;
+        overflow: clip;
+        touch-action: none;
+        cursor: none;
+        user-select: none;
+      }
+
+      .reveal-stage svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .pattern-line {
+        fill: none;
+        stroke-linecap: square;
+        stroke-linejoin: miter;
+        shape-rendering: geometricPrecision;
+      }
+
+      .pattern-line-default {
+        stroke: var(--color-default-line);
+      }
+
+      .pattern-line-reveal {
+        stroke: var(--color-reveal-line);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      @media (pointer: coarse) {
+        .reveal-stage {
+          cursor: auto;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reveal-stage {
+          cursor: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="reveal-stage" id="revealStage" aria-describedby="interactionInstructions">
+      <p class="sr-only" id="interactionInstructions">
+        Move a pointer across the screen to reveal the alternate color layer through a liquid trail.
+      </p>
+
+      <svg id="scene" aria-hidden="true" preserveAspectRatio="none">
+        <defs>
+          <!-- Both visible layers reference this one path. There is no duplicated
+               pattern math, so every horizontal run and 90-degree step aligns. -->
+          <path id="patternGeometry" />
+
+          <!-- Blur turns discrete circles into overlapping scalar fields. The final
+               alpha row multiplies the blurred alpha by 24 and subtracts 11; values
+               above the threshold become opaque and neighboring blobs fuse. -->
+          <filter id="gooFilter" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blurredField" />
+            <feColorMatrix
+              in="blurredField"
+              type="matrix"
+              values="
+                1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 24 -11"
+            />
+          </filter>
+
+          <mask id="revealMask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse">
+            <rect id="maskBounds" fill="black" />
+            <g id="metaballs" fill="white" filter="url(#gooFilter)">
+              <ellipse id="pointerBlob" rx="0" ry="0" />
+              <circle class="pointer-lobe" r="0" />
+              <circle class="pointer-lobe" r="0" />
+              <circle class="pointer-lobe" r="0" />
+              <g id="trailBlobs"></g>
+            </g>
+          </mask>
+        </defs>
+
+        <rect id="defaultField" fill="var(--color-default-field)" />
+        <use
+          href="#patternGeometry"
+          class="pattern-line pattern-line-default"
+          vector-effect="non-scaling-stroke"
+        />
+
+        <g mask="url(#revealMask)">
+          <rect id="revealField" fill="var(--color-reveal-field)" />
+          <use
+            href="#patternGeometry"
+            class="pattern-line pattern-line-reveal"
+            vector-effect="non-scaling-stroke"
+          />
+        </g>
+      </svg>
+    </main>
+
+    <script>
+      (() => {
+        "use strict";
+
+        const SVG_NS = "http://www.w3.org/2000/svg";
+        const scene = document.querySelector("#scene");
+        const stage = document.querySelector("#revealStage");
+        const geometry = document.querySelector("#patternGeometry");
+        const fields = [document.querySelector("#defaultField"), document.querySelector("#revealField")];
+        const maskBounds = document.querySelector("#maskBounds");
+        const gooFilter = document.querySelector("#gooFilter");
+        const pointerBlob = document.querySelector("#pointerBlob");
+        const pointerLobes = [...document.querySelectorAll(".pointer-lobe")];
+        const trailGroup = document.querySelector("#trailBlobs");
+        const patternUses = [...document.querySelectorAll(".pattern-line")];
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+        const pointer = {
+          x: 0,
+          y: 0,
+          targetX: 0,
+          targetY: 0,
+          previousX: 0,
+          previousY: 0,
+          lastEventX: 0,
+          lastEventY: 0,
+          lastSpawnX: 0,
+          lastSpawnY: 0,
+          angle: 0,
+          speed: 0,
+          scale: 0,
+          active: false,
+          initialized: false,
+          lastMoveAt: 0,
+        };
+
+        const particles = [];
+        const particlePool = [];
+        const MAX_PARTICLES = 38;
+        let viewportWidth = 0;
+        let viewportHeight = 0;
+        let previousFrameAt = performance.now();
+
+        function setViewport() {
+          viewportWidth = Math.max(1, window.innerWidth);
+          viewportHeight = Math.max(1, window.innerHeight);
+
+          scene.setAttribute("viewBox", `0 0 ${viewportWidth} ${viewportHeight}`);
+          fields.forEach((field) => {
+            field.setAttribute("width", viewportWidth);
+            field.setAttribute("height", viewportHeight);
+          });
+          maskBounds.setAttribute("width", viewportWidth);
+          maskBounds.setAttribute("height", viewportHeight);
+
+          // The filter region extends beyond the viewport so edge blobs are not clipped.
+          gooFilter.setAttribute("x", -160);
+          gooFilter.setAttribute("y", -160);
+          gooFilter.setAttribute("width", viewportWidth + 320);
+          gooFilter.setAttribute("height", viewportHeight + 320);
+
+          buildPattern();
+        }
+
+        function buildPattern() {
+          const stripePitch = Math.max(34, Math.min(46, viewportHeight / 20));
+          const stripeWidth = Math.max(14, Math.min(20, stripePitch * 0.43));
+          const columns = [
+            0,
+            viewportWidth * 0.13,
+            viewportWidth * 0.28,
+            viewportWidth * 0.43,
+            viewportWidth * 0.62,
+            viewportWidth * 0.78,
+            viewportWidth,
+          ];
+
+          // Each row chooses one offset sequence. Offsets are small multiples of the
+          // stripe pitch, so steps stay orthogonal without changing stripe thickness.
+          const offsetSequences = [
+            [0, 0, -0.42, 0.42, 0, -0.42],
+            [0, 0.42, 0, -0.42, 0.42, 0],
+            [0, -0.42, 0.42, 0, -0.42, 0],
+            [0, 0, 0.42, -0.42, 0, 0.42],
+            [0, 0.42, -0.42, 0, 0.42, -0.42],
+            [0, -0.42, 0, 0.42, -0.42, 0],
+          ];
+
+          const paths = [];
+          const rows = Math.ceil(viewportHeight / stripePitch) + 3;
+
+          for (let row = -1; row < rows; row += 1) {
+            const baseY = row * stripePitch + stripePitch * 0.62;
+            const offsets = offsetSequences[((row % offsetSequences.length) + offsetSequences.length) % offsetSequences.length];
+            let currentY = baseY + offsets[0] * stripePitch;
+            let path = `M ${columns[0]} ${currentY}`;
+
+            for (let column = 0; column < columns.length - 1; column += 1) {
+              path += ` H ${columns[column + 1]}`;
+              if (column < columns.length - 2) {
+                const nextY = baseY + offsets[column + 1] * stripePitch;
+                if (nextY !== currentY) path += ` V ${nextY}`;
+                currentY = nextY;
+              }
+            }
+
+            paths.push(path);
+          }
+
+          geometry.setAttribute("d", paths.join(" "));
+          patternUses.forEach((use) => use.setAttribute("stroke-width", stripeWidth));
+        }
+
+        function createParticleElement() {
+          const circle = document.createElementNS(SVG_NS, "circle");
+          circle.setAttribute("r", 0);
+          trailGroup.append(circle);
+          return circle;
+        }
+
+        function acquireParticleElement() {
+          return particlePool.pop() || createParticleElement();
+        }
+
+        function releaseParticle(index) {
+          const [particle] = particles.splice(index, 1);
+          particle.element.setAttribute("r", 0);
+          particlePool.push(particle.element);
+        }
+
+        function spawnParticle(x, y, speed) {
+          if (reducedMotion.matches) return;
+          if (particles.length >= MAX_PARTICLES) releaseParticle(0);
+
+          const speedFactor = Math.min(1, speed / 1.6);
+          const radius = 25 + speedFactor * 21;
+          particles.push({
+            x,
+            y,
+            radius,
+            age: 0,
+            lifetime: 610 + speedFactor * 280,
+            driftX: -Math.cos(pointer.angle) * speedFactor * 0.018,
+            driftY: -Math.sin(pointer.angle) * speedFactor * 0.018,
+            element: acquireParticleElement(),
+          });
+        }
+
+        function seedTrail(fromX, fromY, toX, toY, speed) {
+          const distance = Math.hypot(toX - fromX, toY - fromY);
+          const spacing = 17;
+          const count = Math.min(8, Math.floor(distance / spacing));
+
+          for (let index = 1; index <= count; index += 1) {
+            const progress = index / (count + 1);
+            spawnParticle(
+              fromX + (toX - fromX) * progress,
+              fromY + (toY - fromY) * progress,
+              speed,
+            );
+          }
+        }
+
+        function handlePointerMove(event) {
+          if (event.pointerType === "touch") event.preventDefault();
+
+          const now = performance.now();
+          const eventX = event.clientX;
+          const eventY = event.clientY;
+
+          if (!pointer.initialized) {
+            Object.assign(pointer, {
+              x: eventX,
+              y: eventY,
+              targetX: eventX,
+              targetY: eventY,
+              previousX: eventX,
+              previousY: eventY,
+              lastEventX: eventX,
+              lastEventY: eventY,
+              lastSpawnX: eventX,
+              lastSpawnY: eventY,
+              initialized: true,
+            });
+          }
+
+          const eventDistance = Math.hypot(eventX - pointer.lastEventX, eventY - pointer.lastEventY);
+          const eventDelta = Math.max(8, now - pointer.lastMoveAt);
+          const eventSpeed = eventDistance / eventDelta;
+
+          if (eventDistance > 2) {
+            pointer.angle = Math.atan2(eventY - pointer.lastEventY, eventX - pointer.lastEventX);
+            seedTrail(pointer.lastSpawnX, pointer.lastSpawnY, eventX, eventY, eventSpeed);
+            pointer.lastSpawnX = eventX;
+            pointer.lastSpawnY = eventY;
+          }
+
+          pointer.targetX = eventX;
+          pointer.targetY = eventY;
+          pointer.lastEventX = eventX;
+          pointer.lastEventY = eventY;
+          pointer.lastMoveAt = now;
+          pointer.active = true;
+        }
+
+        function handlePointerLeave() {
+          pointer.active = false;
+        }
+
+        function updateParticles(delta) {
+          for (let index = particles.length - 1; index >= 0; index -= 1) {
+            const particle = particles[index];
+            particle.age += delta;
+
+            if (particle.age >= particle.lifetime) {
+              releaseParticle(index);
+              continue;
+            }
+
+            const remaining = 1 - particle.age / particle.lifetime;
+            // A power curve keeps the trail substantial at first, then dissolves fast.
+            const radius = particle.radius * Math.pow(remaining, 0.72);
+            particle.x += particle.driftX * delta;
+            particle.y += particle.driftY * delta;
+            particle.element.setAttribute("cx", particle.x.toFixed(2));
+            particle.element.setAttribute("cy", particle.y.toFixed(2));
+            particle.element.setAttribute("r", Math.max(0, radius).toFixed(2));
+          }
+        }
+
+        function updatePointerBlob(now, delta) {
+          if (!pointer.initialized) return;
+
+          const follow = reducedMotion.matches ? 1 : 1 - Math.exp(-delta * 0.018);
+          pointer.x += (pointer.targetX - pointer.x) * follow;
+          pointer.y += (pointer.targetY - pointer.y) * follow;
+
+          const frameDistance = Math.hypot(pointer.x - pointer.previousX, pointer.y - pointer.previousY);
+          const measuredSpeed = frameDistance / Math.max(1, delta);
+          pointer.speed += (measuredSpeed - pointer.speed) * 0.24;
+          pointer.previousX = pointer.x;
+          pointer.previousY = pointer.y;
+
+          const targetScale = pointer.active ? 1 : 0;
+          const scaleFollow = 1 - Math.exp(-delta * (pointer.active ? 0.018 : 0.012));
+          pointer.scale += (targetScale - pointer.scale) * scaleFollow;
+
+          const idleFor = now - pointer.lastMoveAt;
+          const breathing = !reducedMotion.matches && idleFor > 100
+            ? 1 + Math.sin(now * 0.0024) * 0.045
+            : 1;
+          const speedFactor = reducedMotion.matches ? 0 : Math.min(1, pointer.speed / 1.15);
+          const baseRadius = Math.max(44, Math.min(70, Math.min(viewportWidth, viewportHeight) * 0.075));
+          const radiusX = baseRadius * (1 + speedFactor * 0.82) * breathing * pointer.scale;
+          const radiusY = baseRadius * (1 - speedFactor * 0.28) * breathing * pointer.scale;
+          const angleDegrees = pointer.angle * 180 / Math.PI;
+
+          pointerBlob.setAttribute("cx", pointer.x.toFixed(2));
+          pointerBlob.setAttribute("cy", pointer.y.toFixed(2));
+          pointerBlob.setAttribute("rx", Math.max(0, radiusX).toFixed(2));
+          pointerBlob.setAttribute("ry", Math.max(0, radiusY).toFixed(2));
+          pointerBlob.setAttribute("transform", `rotate(${angleDegrees.toFixed(2)} ${pointer.x.toFixed(2)} ${pointer.y.toFixed(2)})`);
+
+          // Three small lobes overlap the head field. Their phases are deliberately
+          // incommensurate, producing a quiet organic edge without random jitter.
+          pointerLobes.forEach((lobe, index) => {
+            const phase = now * (0.0014 + index * 0.00017) + index * 2.094;
+            const orbit = baseRadius * (0.35 + index * 0.035) * pointer.scale;
+            const lobeX = pointer.x + Math.cos(phase) * orbit;
+            const lobeY = pointer.y + Math.sin(phase * 1.13) * orbit;
+            const lobeRadius = baseRadius * (0.45 + Math.sin(phase * 0.83) * 0.05) * pointer.scale;
+            lobe.setAttribute("cx", lobeX.toFixed(2));
+            lobe.setAttribute("cy", lobeY.toFixed(2));
+            lobe.setAttribute("r", Math.max(0, lobeRadius).toFixed(2));
+          });
+        }
+
+        function render(now) {
+          const delta = Math.min(34, now - previousFrameAt);
+          previousFrameAt = now;
+          updatePointerBlob(now, delta);
+          updateParticles(delta);
+          requestAnimationFrame(render);
+        }
+
+        stage.addEventListener("pointerenter", handlePointerMove, { passive: false });
+        stage.addEventListener("pointermove", handlePointerMove, { passive: false });
+        stage.addEventListener("pointerleave", handlePointerLeave);
+        stage.addEventListener("pointercancel", handlePointerLeave);
+        window.addEventListener("blur", handlePointerLeave);
+        window.addEventListener("resize", setViewport, { passive: true });
+
+        reducedMotion.addEventListener("change", () => {
+          while (particles.length) releaseParticle(particles.length - 1);
+        });
+
+        setViewport();
+        requestAnimationFrame(render);
+      })();
+    </script>
+  </body>
+</html>
